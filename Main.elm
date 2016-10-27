@@ -45,22 +45,22 @@ init =
 
 
 type Msg
-    = PlayerAPickChoice Choice
-    | PlayerBPickChoice Choice
+    = MyChoice Choice
+    | TheirChoice Choice
     | Reset
 
 
 update : Msg -> Model -> Model
 update msg model =
     case msg of
-        PlayerAPickChoice choice ->
+        MyChoice choice ->
             let
                 updatedModel =
                     { model | myChoice = Just choice }
             in
                 updateOutcome updatedModel
 
-        PlayerBPickChoice choice ->
+        TheirChoice choice ->
             let
                 updatedModel =
                     { model | theirChoice = Just choice }
@@ -100,10 +100,10 @@ defeatedBy choice =
 
 
 calculateOutcome : Choice -> Choice -> Outcome
-calculateOutcome choiceA choiceB =
-    if choiceA == choiceB then
+calculateOutcome myChoice theirChoice =
+    if myChoice == theirChoice then
         Draw
-    else if (List.member choiceB (defeatedBy choiceA)) then
+    else if (List.member theirChoice (defeatedBy myChoice)) then
         Victory
     else
         Defeat
@@ -117,13 +117,15 @@ view : Model -> Html Msg
 view model =
     div []
         [ div []
-            [ button [ onClick (PlayerAPickChoice Rock) ] [ text "Player A Rock" ]
-            , button [ onClick (PlayerAPickChoice Paper) ] [ text "Player A Paper" ]
-            , button [ onClick (PlayerAPickChoice Scissors) ] [ text "Player A Scissors" ]
-            , button [ onClick (PlayerBPickChoice Rock) ] [ text "Player B Rock" ]
-            , button [ onClick (PlayerBPickChoice Paper) ] [ text "Player B Paper" ]
-            , button [ onClick (PlayerBPickChoice Scissors) ] [ text "Player B Scissors" ]
-            , button [ onClick Reset ] [ text "RESET" ]
+            [ button [ onClick (MyChoice Rock) ] [ text "ME - Rock" ]
+            , button [ onClick (MyChoice Paper) ] [ text "ME - Paper" ]
+            , button [ onClick (MyChoice Scissors) ] [ text "ME - Scissors" ]
             ]
+        , div []
+            [ button [ onClick (TheirChoice Rock) ] [ text "THEM - Rock" ]
+            , button [ onClick (TheirChoice Paper) ] [ text "THEM - Paper" ]
+            , button [ onClick (TheirChoice Scissors) ] [ text "THEM - Scissors" ]
+            ]
+        , div [] [ button [ onClick Reset ] [ text "RESET" ] ]
         , text (toString model)
         ]
