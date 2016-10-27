@@ -24,6 +24,8 @@ type Choice
     = Rock
     | Paper
     | Scissors
+    | Lizard
+    | Spock
 
 
 type Outcome
@@ -90,13 +92,19 @@ defeatedBy : Choice -> List Choice
 defeatedBy choice =
     case choice of
         Rock ->
-            [ Scissors ]
+            [ Scissors, Lizard ]
 
         Paper ->
-            [ Rock ]
+            [ Rock, Spock ]
 
         Scissors ->
-            [ Paper ]
+            [ Paper, Lizard ]
+
+        Lizard ->
+            [ Paper, Spock ]
+
+        Spock ->
+            [ Scissors, Rock ]
 
 
 calculateOutcome : Choice -> Choice -> Outcome
@@ -120,11 +128,15 @@ view model =
             [ button [ onClick (MyChoice Rock) ] [ text "ME - Rock" ]
             , button [ onClick (MyChoice Paper) ] [ text "ME - Paper" ]
             , button [ onClick (MyChoice Scissors) ] [ text "ME - Scissors" ]
+            , button [ onClick (MyChoice Lizard) ] [ text "ME - Lizard" ]
+            , button [ onClick (MyChoice Spock) ] [ text "ME - Spock" ]
             ]
         , div []
             [ button [ onClick (TheirChoice Rock) ] [ text "THEM - Rock" ]
             , button [ onClick (TheirChoice Paper) ] [ text "THEM - Paper" ]
             , button [ onClick (TheirChoice Scissors) ] [ text "THEM - Scissors" ]
+            , button [ onClick (TheirChoice Lizard) ] [ text "THEM - Lizard" ]
+            , button [ onClick (TheirChoice Spock) ] [ text "THEM - Spock" ]
             ]
         , div [] [ button [ onClick Reset ] [ text "RESET" ] ]
         , text (toString model)
