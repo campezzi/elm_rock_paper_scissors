@@ -15,7 +15,7 @@ main =
 
 type alias Model =
     { myChoice : Maybe Choice
-    , theirChoice : Maybe Choice
+    , opponentChoice : Maybe Choice
     , outcome : Maybe Outcome
     }
 
@@ -37,7 +37,7 @@ type Outcome
 init : Model
 init =
     { myChoice = Nothing
-    , theirChoice = Nothing
+    , opponentChoice = Nothing
     , outcome = Nothing
     }
 
@@ -53,7 +53,7 @@ type Msg
 
 type Player
     = Me
-    | Them
+    | Opponent
 
 
 update : Msg -> Model -> Model
@@ -64,8 +64,8 @@ update msg model =
                 Me ->
                     updateOutcome { model | myChoice = Just choice }
 
-                Them ->
-                    updateOutcome { model | theirChoice = Just choice }
+                Opponent ->
+                    updateOutcome { model | opponentChoice = Just choice }
 
         Reset ->
             init
@@ -73,9 +73,9 @@ update msg model =
 
 updateOutcome : Model -> Model
 updateOutcome model =
-    case ( model.myChoice, model.theirChoice ) of
-        ( Just myChoice, Just theirChoice ) ->
-            { model | outcome = Just (calculateOutcome myChoice theirChoice) }
+    case ( model.myChoice, model.opponentChoice ) of
+        ( Just myChoice, Just opponentChoice ) ->
+            { model | outcome = Just (calculateOutcome myChoice opponentChoice) }
 
         _ ->
             model
@@ -101,10 +101,10 @@ defeatedBy choice =
 
 
 calculateOutcome : Choice -> Choice -> Outcome
-calculateOutcome myChoice theirChoice =
-    if myChoice == theirChoice then
+calculateOutcome myChoice opponentChoice =
+    if myChoice == opponentChoice then
         Draw
-    else if (List.member theirChoice (defeatedBy myChoice)) then
+    else if (List.member opponentChoice (defeatedBy myChoice)) then
         Victory
     else
         Defeat
@@ -122,8 +122,8 @@ view model =
         , hr [] []
         , div [] [ h3 [] [ text "My Choice" ] ]
         , div [] (weaponButtons Me)
-        , div [] [ h3 [] [ text "Their Choice" ] ]
-        , div [] (weaponButtons Them)
+        , div [] [ h3 [] [ text "Opponent's Choice" ] ]
+        , div [] (weaponButtons Opponent)
         , hr [] []
         , text (toString model)
         ]
