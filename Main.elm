@@ -73,12 +73,7 @@ update msg model =
 
 updateOutcome : Model -> Model
 updateOutcome model =
-    case ( model.myChoice, model.opponentChoice ) of
-        ( Just myChoice, Just opponentChoice ) ->
-            { model | outcome = Just (calculateOutcome myChoice opponentChoice) }
-
-        _ ->
-            model
+    { model | outcome = Maybe.map2 calculateOutcome model.myChoice model.opponentChoice }
 
 
 defeatedBy : Choice -> List Choice
