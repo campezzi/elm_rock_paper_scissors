@@ -47,27 +47,25 @@ init =
 
 
 type Msg
-    = MyChoice Choice
-    | TheirChoice Choice
+    = ChoicePicked Player Choice
     | Reset
+
+
+type Player
+    = Me
+    | Them
 
 
 update : Msg -> Model -> Model
 update msg model =
     case msg of
-        MyChoice choice ->
-            let
-                updatedModel =
-                    { model | myChoice = Just choice }
-            in
-                updateOutcome updatedModel
+        ChoicePicked player choice ->
+            case player of
+                Me ->
+                    updateOutcome { model | myChoice = Just choice }
 
-        TheirChoice choice ->
-            let
-                updatedModel =
-                    { model | theirChoice = Just choice }
-            in
-                updateOutcome updatedModel
+                Them ->
+                    updateOutcome { model | theirChoice = Just choice }
 
         Reset ->
             init
@@ -128,24 +126,22 @@ view model =
         , div [] [ button [ onClick Reset ] [ text "RESET" ] ]
         , hr [] []
         , div [] [ h3 [] [ text "My Choice" ] ]
-        , div []
-            [ button [ onClick (MyChoice Rock) ] [ text "Rock" ]
-            , button [ onClick (MyChoice Paper) ] [ text "Paper" ]
-            , button [ onClick (MyChoice Scissors) ] [ text "Scissors" ]
-            , button [ onClick (MyChoice Lizard) ] [ text "Lizard" ]
-            , button [ onClick (MyChoice Spock) ] [ text "Spock" ]
-            ]
+        , div [] (weaponButtons Me)
         , div [] [ h3 [] [ text "Their Choice" ] ]
-        , div []
-            [ button [ onClick (TheirChoice Rock) ] [ text "Rock" ]
-            , button [ onClick (TheirChoice Paper) ] [ text "Paper" ]
-            , button [ onClick (TheirChoice Scissors) ] [ text "Scissors" ]
-            , button [ onClick (TheirChoice Lizard) ] [ text "Lizard" ]
-            , button [ onClick (TheirChoice Spock) ] [ text "Spock" ]
-            ]
+        , div [] (weaponButtons Them)
         , hr [] []
         , text (toString model)
         ]
+
+
+weaponButtons : Player -> List (Html Msg)
+weaponButtons player =
+    [ button [ onClick (ChoicePicked player Rock) ] [ text "Rock" ]
+    , button [ onClick (ChoicePicked player Paper) ] [ text "Paper" ]
+    , button [ onClick (ChoicePicked player Scissors) ] [ text "Scissors" ]
+    , button [ onClick (ChoicePicked player Lizard) ] [ text "Lizard" ]
+    , button [ onClick (ChoicePicked player Spock) ] [ text "Spock" ]
+    ]
 
 
 outcomeString : Maybe Outcome -> String
