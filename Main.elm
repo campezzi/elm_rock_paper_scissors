@@ -73,16 +73,11 @@ update msg model =
 
 updateOutcome : Model -> Model
 updateOutcome model =
-    case model.myChoice of
-        Just myChoice ->
-            case model.theirChoice of
-                Just theirChoice ->
-                    { model | outcome = Just (calculateOutcome myChoice theirChoice) }
+    case ( model.myChoice, model.theirChoice ) of
+        ( Just myChoice, Just theirChoice ) ->
+            { model | outcome = Just (calculateOutcome myChoice theirChoice) }
 
-                Nothing ->
-                    model
-
-        Nothing ->
+        _ ->
             model
 
 
@@ -136,12 +131,11 @@ view model =
 
 weaponButtons : Player -> List (Html Msg)
 weaponButtons player =
-    [ button [ onClick (ChoicePicked player Rock) ] [ text "Rock" ]
-    , button [ onClick (ChoicePicked player Paper) ] [ text "Paper" ]
-    , button [ onClick (ChoicePicked player Scissors) ] [ text "Scissors" ]
-    , button [ onClick (ChoicePicked player Lizard) ] [ text "Lizard" ]
-    , button [ onClick (ChoicePicked player Spock) ] [ text "Spock" ]
-    ]
+    let
+        weaponButton =
+            (\choice -> button [ onClick (ChoicePicked player choice) ] [ text (toString choice) ])
+    in
+        List.map weaponButton [ Rock, Paper, Scissors, Lizard, Spock ]
 
 
 outcomeString : Maybe Outcome -> String
