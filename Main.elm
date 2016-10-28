@@ -73,16 +73,11 @@ update msg model =
 
 updateOutcome : Model -> Model
 updateOutcome model =
-    case model.myChoice of
-        Just myChoice ->
-            case model.theirChoice of
-                Just theirChoice ->
-                    { model | outcome = Just (calculateOutcome myChoice theirChoice) }
+    case ( model.myChoice, model.theirChoice ) of
+        ( Just myChoice, Just theirChoice ) ->
+            { model | outcome = Just (calculateOutcome myChoice theirChoice) }
 
-                Nothing ->
-                    model
-
-        Nothing ->
+        _ ->
             model
 
 
