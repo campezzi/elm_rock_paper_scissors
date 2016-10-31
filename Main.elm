@@ -3,6 +3,7 @@ module Main exposing (..)
 import Html exposing (..)
 import Html.Events exposing (onClick)
 import Html.App as App
+import Random
 
 
 main =
@@ -40,7 +41,7 @@ init =
       , opponentChoice = Nothing
       , outcome = Nothing
       }
-    , Cmd.none
+    , Random.generate OpponentChoice (Random.int 0 4)
     )
 
 
@@ -55,6 +56,7 @@ subscriptions model =
 
 type Msg
     = ChoicePicked Player Choice
+    | OpponentChoice Int
     | Reset
 
 
@@ -73,6 +75,9 @@ update msg model =
 
                 Opponent ->
                     ( updateOutcome { model | opponentChoice = Just choice }, Cmd.none )
+
+        OpponentChoice randomInt ->
+            ( updateOutcome { model | opponentChoice = Just (choiceForIndex randomInt) }, Cmd.none )
 
         Reset ->
             init
@@ -119,25 +124,31 @@ calculateOutcome myChoice opponentChoice =
 view : Model -> Html Msg
 view model =
     div []
-        [ h2 [] [ text (outcomeString model.outcome) ]
+        [ div [] [ h3 [] [ text "My Choice" ] ]
+        , div [] (choiceButtons Me)
+        , hr [] []
+        , h2 [] [ text (outcomeString model.outcome) ]
         , div [] [ button [ onClick Reset ] [ text "RESET" ] ]
-        , hr [] []
-        , div [] [ h3 [] [ text "My Choice" ] ]
-        , div [] (weaponButtons Me)
-        , div [] [ h3 [] [ text "Opponent's Choice" ] ]
-        , div [] (weaponButtons Opponent)
-        , hr [] []
-        , text (toString model)
         ]
 
 
-weaponButtons : Player -> List (Html Msg)
-weaponButtons player =
+choiceButtons : Player -> List (Html Msg)
+choiceButtons player =
     let
-        weaponButton =
+        choiceButton =
             (\choice -> button [ onClick (ChoicePicked player choice) ] [ text (toString choice) ])
     in
-        List.map weaponButton [ Rock, Paper, Scissors, Lizard, Spock ]
+        List.map choiceButton allChoices
+
+
+allChoices : List Choice
+allChoices =
+    [ Rock, Paper, Scissors, Lizard, Spock ]
+
+
+choiceForIndex : Int -> Choice
+choiceForIndex index =
+    Maybe.withDefault Rock (List.drop index allChoices |> List.head)
 
 
 outcomeString : Maybe Outcome -> String
