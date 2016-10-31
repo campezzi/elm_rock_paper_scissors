@@ -127,7 +127,7 @@ view model =
         [ div [] [ h3 [] [ text "My Choice" ] ]
         , div [] (choiceButtons Me)
         , hr [] []
-        , h2 [] [ text (outcomeString model.outcome) ]
+        , h2 [] [ text (outcomeString model) ]
         , div [] [ button [ onClick Reset ] [ text "RESET" ] ]
         ]
 
@@ -151,17 +151,22 @@ choiceForIndex index =
     Maybe.withDefault Rock (List.drop index allChoices |> List.head)
 
 
-outcomeString : Maybe Outcome -> String
-outcomeString outcome =
-    case outcome of
+outcomeString : Model -> String
+outcomeString model =
+    case model.outcome of
         Just Draw ->
-            "It's a draw!"
+            "It's a draw! You both picked " ++ (opponentChoiceString model)
 
         Just Victory ->
-            "You win!"
+            "You win! Your opponent picked " ++ (opponentChoiceString model)
 
         Just Defeat ->
-            "You lose!"
+            "You lose! Your opponent picked " ++ (opponentChoiceString model)
 
         _ ->
             "Game in progress"
+
+
+opponentChoiceString : Model -> String
+opponentChoiceString model =
+    toString (Maybe.withDefault Rock model.opponentChoice)
