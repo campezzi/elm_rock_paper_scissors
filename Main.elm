@@ -6,7 +6,7 @@ import Html.App as App
 
 
 main =
-    App.beginnerProgram { model = init, update = update, view = view }
+    App.program { init = init, update = update, view = view, subscriptions = subscriptions }
 
 
 
@@ -34,12 +34,19 @@ type Outcome
     | Defeat
 
 
-init : Model
+init : ( Model, Cmd Msg )
 init =
-    { myChoice = Nothing
-    , opponentChoice = Nothing
-    , outcome = Nothing
-    }
+    ( { myChoice = Nothing
+      , opponentChoice = Nothing
+      , outcome = Nothing
+      }
+    , Cmd.none
+    )
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Sub.none
 
 
 
@@ -56,16 +63,16 @@ type Player
     | Opponent
 
 
-update : Msg -> Model -> Model
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         ChoicePicked player choice ->
             case player of
                 Me ->
-                    updateOutcome { model | myChoice = Just choice }
+                    ( updateOutcome { model | myChoice = Just choice }, Cmd.none )
 
                 Opponent ->
-                    updateOutcome { model | opponentChoice = Just choice }
+                    ( updateOutcome { model | opponentChoice = Just choice }, Cmd.none )
 
         Reset ->
             init
