@@ -136,16 +136,14 @@ weaponButtons player =
 outcomeString : Maybe Outcome -> String
 outcomeString outcome =
     case outcome of
-        Nothing ->
+        Just Draw ->
+            "It's a draw!"
+
+        Just Victory ->
+            "You win!"
+
+        Just Defeat ->
+            "You lose!"
+
+        _ ->
             "Game in progress"
-
-        Just result ->
-            case result of
-                Draw ->
-                    "It's a draw!"
-
-                Victory ->
-                    "You win!"
-
-                Defeat ->
-                    "You lose!"
