@@ -169,4 +169,9 @@ outcomeString model =
 
 opponentChoiceString : Model -> String
 opponentChoiceString model =
-    toString (Maybe.withDefault Rock model.opponentChoice)
+    case model.opponentChoice of
+        Just choice ->
+            toString choice
+
+        Nothing ->
+            ""
