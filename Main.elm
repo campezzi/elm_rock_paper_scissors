@@ -41,7 +41,7 @@ init =
       , opponentChoice = Nothing
       , outcome = Nothing
       }
-    , Random.generate OpponentChoice (Random.int 0 4)
+    , Random.generate (ChoicePicked Opponent) generateChoice
     )
 
 
@@ -50,13 +50,17 @@ subscriptions model =
     Sub.none
 
 
+allChoices : List Choice
+allChoices =
+    [ Rock, Paper, Scissors, Lizard, Spock ]
+
+
 
 -- UPDATE
 
 
 type Msg
     = ChoicePicked Player Choice
-    | OpponentChoice Int
     | Reset
 
 
@@ -75,9 +79,6 @@ update msg model =
 
                 Opponent ->
                     ( updateOutcome { model | opponentChoice = Just choice }, Cmd.none )
-
-        OpponentChoice randomInt ->
-            ( updateOutcome { model | opponentChoice = Just (choiceForIndex randomInt) }, Cmd.none )
 
         Reset ->
             init
@@ -141,14 +142,13 @@ choiceButtons player =
         List.map choiceButton allChoices
 
 
-allChoices : List Choice
-allChoices =
-    [ Rock, Paper, Scissors, Lizard, Spock ]
-
-
-choiceForIndex : Int -> Choice
-choiceForIndex index =
-    Maybe.withDefault Rock (List.drop index allChoices |> List.head)
+generateChoice : Random.Generator Choice
+generateChoice =
+    let
+        choiceForIndex =
+            (\index -> Maybe.withDefault Rock (List.drop index allChoices |> List.head))
+    in
+        Random.map choiceForIndex (Random.int 0 ((List.length allChoices) - 1))
 
 
 outcomeString : Model -> String
