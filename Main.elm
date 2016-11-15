@@ -2,12 +2,11 @@ module Main exposing (..)
 
 import Html exposing (..)
 import Html.Events exposing (onClick)
-import Html.App as App
 import Random
 
 
 main =
-    App.program { init = init, update = update, view = view, subscriptions = subscriptions }
+    Html.program { init = init, update = update, view = view, subscriptions = subscriptions }
 
 
 
